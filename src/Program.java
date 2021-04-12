@@ -1,21 +1,18 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Program {
     public static void main(String[] args) throws IOException {
         List <Model> list = new ArrayList<>();
         fill(list);
-        show(list);
         Collections.sort(list, new AgeComparator());
         show(list);
-        int b = 0;
+        writeToFile(list);
+        /*int b = 0;
         FileInputStream file = new FileInputStream("file.TXT");
         while((b = file.read()) != -1) {
             System.out.println((char)b);
-        }
+        }*/
     }
 
     static void fill(List list) {
@@ -36,6 +33,27 @@ public class Program {
             System.out.println(a.getId() + "\t" +a.getAge() + "\t" + a.getName() + "\t" + a.getSurname());
         }
         System.out.println();
+    }
+
+    public  static  void writeToFile(List<Model> list) {
+        File file = new File("file.txt");
+        PrintStream ps = null;
+
+        try {
+            ps = new PrintStream(file);
+            ps.println("   id   | Вік  | Ріст |    Ім'я    |    Прізвище    ");
+            ps.println("-----------------------------------------------------");
+            for (Model a: list) {
+                ps.printf("%7s | %2s | %4s | %10s | %15s\n", a.getId(), a.getAge(), a.getHeight(), a.getName(), a.getSurname());
+                ps.println("-----------------------------------------------------");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            ps.close();
+        }
     }
 }
 
