@@ -1,21 +1,20 @@
 import java.io.*;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Program {
+    public static final String line = "-------------------------------------------------------";
     public static void main(String[] args) throws IOException {
+        File file = new File("file.txt");
         List <Model> list = new ArrayList<>();
         fill(list);
-        Collections.sort(list, new AgeComparator());
-        show(list);
-        writeToFile(list);
-        /*int b = 0;
-        FileInputStream file = new FileInputStream("file.TXT");
-        while((b = file.read()) != -1) {
-            System.out.println((char)b);
-        }*/
+        list.sort(new AgeComparator());
+        writeToFile(file, list);
+        readFromFile(file);
     }
 
-    static void fill(List list) {
+    static void fill(List<Model> list) {
         list.add(new Model(87073, 17, 185, "Антон", "Пласконіс"));
         list.add(new Model(54997, 20, 190, "Данило", "Щербатюк"));
         list.add(new Model(12662, 44, 176, "Мирослав", "Пархомчук"));
@@ -28,32 +27,32 @@ public class Program {
         list.add(new Model(79673, 25, 163, "Руслана", "Крамаренко"));
     }
 
-    public static void show(List<Model> list) {
-        for (Model a: list) {
-            System.out.println(a.getId() + "\t" +a.getAge() + "\t" + a.getName() + "\t" + a.getSurname());
-        }
-        System.out.println();
-    }
-
-    public  static  void writeToFile(List<Model> list) {
-        File file = new File("file.txt");
-        PrintStream ps = null;
-
-        try {
-            ps = new PrintStream(file);
-            ps.println("   id   | Вік  | Ріст |    Ім'я    |    Прізвище    ");
-            ps.println("-----------------------------------------------------");
-            for (Model a: list) {
-                ps.printf("%7s | %2s | %4s | %10s | %15s\n", a.getId(), a.getAge(), a.getHeight(), a.getName(), a.getSurname());
-                ps.println("-----------------------------------------------------");
+    public  static  void writeToFile( File file, List<Model> list) {
+        try (PrintStream ps = new PrintStream(file)) {
+            ps.println("|   id   | Вік  | Ріст |    Ім'я    |    Прізвище     |");
+            ps.println(line);
+            for (Model a : list) {
+                ps.print("|");
+                ps.printf("%7s | %2s | %4s | %10s | %15s ", a.getId(), a.getAge(), a.getHeight(), a.getName(), a.getSurname());
+                ps.print("|\n");
+                ps.println(line);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            ps.close();
         }
+    }
+
+    public static void readFromFile(File file) throws IOException {
+        int b;
+        FileInputStream fs;
+        InputStreamReader isr;
+        fs = new FileInputStream(file);
+        isr = new InputStreamReader(fs, StandardCharsets.UTF_8);
+        while ((b = isr.read()) != -1) {
+            System.out.print((char) b);
+        }
+        fs.close();
+        isr.close();
     }
 }
 
